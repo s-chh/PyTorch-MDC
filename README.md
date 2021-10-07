@@ -1,2 +1,2 @@
 # PyTorch-MDC-
-Unofficial pytorch implementation of Domain-Adversarial Training of Neural Networks
+Unofficial pytorch implementation of Maximum Domain Confusion loss from Simultaneous Deep Transfer Across Domains and Tasks

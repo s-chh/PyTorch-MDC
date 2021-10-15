@@ -12,6 +12,5 @@ Results:
 SVHN &#10230; MNIST | 61.2|80.2 |
 MNIST &#10230; USPS | 82.4 | 94.9|
 USPS &#10230; MNIST | 50.6| 97.4|
-MNIST &#10230; MNIST-M | | |
-SyDigits &#10230; SVHN | | |
-SySigns &#10230; GTSRB | | |
+SyDigits &#10230; SVHN | 87.9| 91.5|
+SySigns &#10230; GTSRB | 92.2| 93.3|

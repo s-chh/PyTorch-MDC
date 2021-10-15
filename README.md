@@ -6,6 +6,7 @@ Unofficial pytorch implementation of Maximum Domain Confusion loss from [Simulta
 <br>
 Results:
 <br>
+
  | Dataset    |Source Only    | Adaptation |
 --- | --- | --- | 
 SVHN &#10230; MNIST | | |

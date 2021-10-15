@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-from utils import GradReverse
 
 
 class encoder(nn.Module):
@@ -109,8 +108,6 @@ class discriminator(nn.Module):
                 nn.init.normal_(m.weight, 0.0, 0.02)
 
     def forward(self, x, alpha=-1):
-        if self.args.method.lower() == 'dann':
-            x = GradReverse.apply(x, alpha)
         x = F.leaky_relu(self.l1(x), 0.2)
         x = F.leaky_relu(self.l2(x), 0.2)
         x = torch.sigmoid(self.l3(x))

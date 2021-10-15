@@ -21,7 +21,7 @@ class Solver(object):
         self.best_acc = 0
         self.time_taken = None
 
-        if self.args.dset == 'u2m' or self.args.dset == 'm2u' or self.args.dset == 'm2mm':
+        if self.args.dset == 'u2m' or self.args.dset == 'm2u':
             self.enc = encoder_small(self.args).cuda()
         else:
             self.enc = encoder(self.args).cuda()

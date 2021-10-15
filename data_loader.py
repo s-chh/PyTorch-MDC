@@ -39,22 +39,6 @@ def get_loader(args):
         t_train = datasets.USPS(os.path.join(args.data_path, 'usps'), train=True, download=True, transform=tr)
         t_test = datasets.USPS(os.path.join(args.data_path, 'usps'), train=False, download=True, transform=tr)
 
-    elif args.dset == 'm2mm':
-        mnist_tr = transforms.Compose([transforms.Resize([32, 32]),
-                                       transforms.Grayscale(3),
-                                       transforms.ToTensor(),
-                                       transforms.Normalize([0.5], [0.5])])
-
-        s_train = datasets.MNIST(os.path.join(args.data_path, 'mnist'), train=True, download=True, transform=mnist_tr)
-        s_test = datasets.MNIST(os.path.join(args.data_path, 'mnist'), train=False, download=True, transform=mnist_tr)
-
-        mnistm_tr = transforms.Compose([transforms.Resize([32, 32]),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize([0.5], [0.5])])
-
-        t_train = datasets.ImageFolder(root=os.path.join(args.data_path, 'mnistm', 'trainset'), transform=mnistm_tr)
-        t_test = datasets.ImageFolder(root=os.path.join(args.data_path, 'mnistm', 'testset'), transform=mnistm_tr)
-
     elif args.dset == 'sd2sv':
         tr = transforms.Compose([transforms.Resize([32, 32]),
                                  transforms.ToTensor(),

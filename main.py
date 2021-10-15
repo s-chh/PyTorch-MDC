@@ -54,10 +54,6 @@ def update_args(args):
         args.channels = 1
         args.adapt_epochs = 1000  # Due to small size of USPS
 
-    elif args.dset == 'm2mm':
-        args.source = 'mnist'
-        args.target = 'mnistm'
-
     elif args.dset == 'sd2sv':
         args.source = 'sydigits'
         args.target = 'svhn'
@@ -96,7 +92,7 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--log_step', type=int, default=50)
 
-    parser.add_argument('--dset', type=str, default='s2m', choices=['s2m', 'u2m', 'm2u', 'm2mm', 'sd2sv', 'signs'])
+    parser.add_argument('--dset', type=str, default='s2m', choices=['s2m', 'u2m', 'm2u', 'sd2sv', 'signs'])
     parser.add_argument('--data_path', type=str, default='./data/')
     parser.add_argument('--model_path', type=str, default='./model')
     parser.add_argument('--seed', type=int, default=100)

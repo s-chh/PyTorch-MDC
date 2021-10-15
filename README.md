@@ -5,4 +5,4 @@ Unofficial pytorch implementation of Maximum Domain Confusion loss from [Simulta
 
  | Dataset    |Source Only    | Adaptation |
 --- | --- | --- | 
-Svhn &#10230; Mnist | | |
+SVHN &#10230; MNIST | | |

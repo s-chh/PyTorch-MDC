@@ -10,3 +10,8 @@ Results:
  | Dataset    |Source Only    | MDC |
 --- | --- | --- | 
 SVHN &#10230; MNIST | | |
+MNIST &#10230; USPS | | |
+USPS &#10230; MNIST | | |
+MNIST &#10230; MNIST-M | | |
+SyDigits &#10230; SVHN | | |
+SySigns &#10230; GTSRB | | |

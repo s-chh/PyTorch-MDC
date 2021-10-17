@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import os
 from torch import optim
-from model import encoder, encoder_small, classifier, discriminator
+from model import encoder, classifier, discriminator
 from sklearn.metrics import confusion_matrix, accuracy_score
 from data_loader import get_loader
 import copy
@@ -19,13 +19,8 @@ class Solver(object):
         self.bce = nn.BCELoss()
 
         self.best_acc = 0
-        self.time_taken = None
 
-        if self.args.dset == 'u2m' or self.args.dset == 'm2u':
-            self.enc = encoder_small(self.args).cuda()
-        else:
-            self.enc = encoder(self.args).cuda()
-
+        self.enc = encoder(self.args).cuda()
         self.clf = classifier(self.args).cuda()
         self.fd = discriminator(self.args).cuda()
 
@@ -40,10 +35,10 @@ class Solver(object):
         self.real_label = torch.FloatTensor(self.args.batch_size, 1).fill_(1).cuda()
 
         if not args.method == 'src':
-            if os.path.exists(os.path.join(self.args.src_model_path, 'src_enc.pt')):
+            if os.path.exists(os.path.join(self.args.model_path, 'src_enc.pt')):
                 print("Loading Source model...")
-                self.enc.load_state_dict(torch.load(os.path.join(self.args.src_model_path, 'src_enc.pt')))
-                self.clf.load_state_dict(torch.load(os.path.join(self.args.src_model_path, 'src_clf.pt')))
+                self.enc.load_state_dict(torch.load(os.path.join(self.args.model_path, 'src_enc.pt')))
+                self.clf.load_state_dict(torch.load(os.path.join(self.args.model_path, 'src_clf.pt')))
             else:
                 print("Training Source model...")
                 self.src()
@@ -84,22 +79,22 @@ class Solver(object):
 
     def test(self):
         s_train_acc, cm = self.test_dataset('s_train')
-        print("Source Tr Acc: %.2f" % (s_train_acc))
+        print("Source Tr Acc: %.2f" % s_train_acc)
         if self.args.cm:
             print(cm)
 
         s_test_acc, cm = self.test_dataset('s_test')
-        print("Source Te Acc: %.2f" % (s_test_acc))
+        print("Source Te Acc: %.2f" % s_test_acc)
         if self.args.cm:
             print(cm)
 
         t_train_acc, cm = self.test_dataset('t_train')
-        print("Target Tr Acc: %.2f" % (t_train_acc))
+        print("Target Tr Acc: %.2f" % t_train_acc)
         if self.args.cm:
             print(cm)
 
         t_test_acc, cm = self.test_dataset('t_test')
-        print("Target Te Acc: %.2f" % (t_test_acc))
+        print("Target Te Acc: %.2f" % t_test_acc)
         if self.args.cm:
             print(cm)
 
@@ -118,8 +113,7 @@ class Solver(object):
         s_iter_per_epoch = len(iter(self.s_train_loader))
         self.args.src_test_epoch = max(self.args.src_epochs // 10, 1)
 
-        self.optimizer = optim.Adam(list(self.enc.parameters()) + list(self.clf.parameters()), self.args.lr,
-                                    betas=[0.5, 0.999], weight_decay=self.args.weight_decay)
+        self.optimizer = optim.Adam(list(self.enc.parameters()) + list(self.clf.parameters()), self.args.lr, betas=[0.5, 0.999], weight_decay=self.args.weight_decay)
 
         for epoch in range(self.args.src_epochs):
 
@@ -154,8 +148,8 @@ class Solver(object):
                     best_enc = copy.deepcopy(self.enc.state_dict())
                     best_clf = copy.deepcopy(self.clf.state_dict())
 
-        torch.save(best_enc, os.path.join(self.args.src_model_path, 'src_enc.pt'))
-        torch.save(best_clf, os.path.join(self.args.src_model_path, 'src_clf.pt'))
+        torch.save(best_enc, os.path.join(self.args.model_path, 'src_enc.pt'))
+        torch.save(best_clf, os.path.join(self.args.model_path, 'src_clf.pt'))
 
         self.enc.load_state_dict(best_enc)
         self.clf.load_state_dict(best_clf)
@@ -172,10 +166,8 @@ class Solver(object):
         print("Target iters per epoch: %d" % (t_iter_per_epoch))
         print("iters per epoch: %d" % (min(s_iter_per_epoch, t_iter_per_epoch)))
 
-        self.c_optimizer = optim.Adam(list(self.enc.parameters()) + list(self.clf.parameters()), self.args.lr,
-                                      betas=[0.5, 0.999], weight_decay=self.args.weight_decay)
-        self.fd_optimizer = optim.Adam(list(self.fd.parameters()), self.args.lr, betas=[0.5, 0.999],
-                                       weight_decay=self.args.weight_decay)
+        self.c_optimizer = optim.Adam(list(self.enc.parameters()) + list(self.clf.parameters()), self.args.lr, betas=[0.5, 0.999], weight_decay=self.args.weight_decay)
+        self.fd_optimizer = optim.Adam(list(self.fd.parameters()), self.args.lr, betas=[0.5, 0.999], weight_decay=self.args.weight_decay)
 
         for epoch in range(self.args.adapt_epochs):
             self.clf.train()
@@ -235,3 +227,7 @@ class Solver(object):
                 print("Target test acc: %0.2f" % (t_test_acc))
                 if self.args.cm:
                     print(cm)
+
+        torch.save(self.enc.state_dict(), os.path.join(self.args.model_path, 'mdc_enc.pt'))
+        torch.save(self.clf.state_dict(), os.path.join(self.args.model_path, 'mdc_clf.pt'))
+        torch.save(self.fd.state_dict(), os.path.join(self.args.model_path, 'mdc_disc.pt'))
